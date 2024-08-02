@@ -67,15 +67,16 @@
 
     context.scale(20, 20);
 
-    const SHAPES = [
-      [1, 1, 1, 1],
-      [1, 1, 1, 0, 1],
-      [1, 1, 1, 0, 0, 1],
-      [1, 1, 0, 0, 1, 1],
-      [1, 1, 0, 0, 0, 1, 1],
-      [0, 1, 1, 0, 1, 1],
-      [0, 1, 0, 0, 1, 1, 1]
-    ];
+    const pieces = 'ILJOTSZ';
+    const SHAPES = {
+      'I': [1, 1, 1, 1],
+      'L': [1, 1, 1, 0, 1],
+      'J': [1, 1, 1, 0, 0, 1],
+      'O': [1, 1, 0, 0, 1, 1],
+      'S': [1, 1, 0, 0, 0, 1, 1],
+      'T': [0, 1, 1, 0, 1, 1],
+      'Z': [0, 1, 0, 0, 1, 1, 1]
+    };
 
     const COLORS = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500'];
 
@@ -162,10 +163,10 @@
     }
 
     function playerReset() {
-      const pieces = 'ILJOTSZ';
-      player.matrix = createPiece(pieces[pieces.length * Math.random() | 0]);
+      const pieceType = pieces[Math.floor(Math.random() * pieces.length)];
+      player.matrix = createPiece(pieceType);
       player.pos.y = 0;
-      player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
+      player.pos.x = Math.floor((arena[0].length - player.matrix.length) / 2);
       player.color = COLORS[Math.floor(Math.random() * COLORS.length)];
       if (collide(arena, player)) {
         arena.forEach(row => row.fill(0));
@@ -190,7 +191,7 @@
     }
 
     function createPiece(type) {
-      return SHAPES[pieces.indexOf(type)];
+      return SHAPES[type];
     }
 
     function arenaSweep() {
@@ -225,7 +226,7 @@
       matrix.forEach((row, y) => {
         row.forEach((value, x) => {
           if (value !== 0) {
-            context.fillStyle = player.color;
+            context.fillStyle = offset === player.pos ? player.color : COLORS[value - 1];
             context.fillRect(x + offset.x, y + offset.y, 1, 1);
           }
         });
